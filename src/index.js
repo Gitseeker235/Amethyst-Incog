@@ -55,7 +55,6 @@ app.use((req, res, next) => {
 
 app.use(serveStatic(fileURLToPath(new URL("../static/", import.meta.url))));
 app.use("/source", serveStatic(gamesPath));
-app.use("/source", serveIndex(gamesPath, { icons: true }));
 
 app.use("/uv/", serveStatic(uvPath));
 analytics(app);
