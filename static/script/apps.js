@@ -1,20 +1,3 @@
-/**
- * Incognito
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 /*
   _____                   _                _     _                                                                      
  |  __ \                 | |              | |   | |                                                                     
@@ -51,38 +34,37 @@ async function apps(app) {
         }
     });
 
-	function searchApps() {
-		let count = 0;
+    app.search.input.setAttribute(
+        'oninput',
+        '(' + (function() {
+            let count = 0;
 
-		app.main.library.querySelectorAll('.gs-entry').forEach(node => {
-			if (node.getAttribute('data-title').toLowerCase().includes(app.search.input.value.toLowerCase())) {
-				node.setAttribute('data-active', '1');
-				count++;
-			} else {
-				node.removeAttribute('data-active');
-			};
-		}); 
+            app.main.library.querySelectorAll('.gs-entry').forEach(node => {
+                if (node.getAttribute('data-title').toLowerCase().includes(app.search.input.value.toLowerCase())) {
+                    node.setAttribute('data-active', '1');
+                    count++;
+                } else {
+                    node.removeAttribute('data-active');
+                };
+            }); 
 
-		if (!count) {
-			app.main.library.style.display = 'none';
-			app.main.emptySearch.style.display = 'block';
-		} else {
-			app.main.library.style.removeProperty('display');
-			app.main.emptySearch.style.display = 'none';
-		};
-	}
-
-	app.search.input.addEventListener('input', searchApps);
-	app.once('exit', () => app.search.input.removeEventListener('input', searchApps));
+            if (!count) {
+                app.main.library.style.display = 'none';
+                app.main.emptySearch.style.display = 'block';
+            } else {
+                app.main.library.style.removeProperty('display');
+                app.main.emptySearch.style.display = 'none';
+            };
+        }).toString() + ')()'
+    )
 };
 
 
 async function compileGs(app) {
-    const res = await fetch('./source/apps.json');
+    const res = await fetch('./apps.json');
     const json = await res.json();
     const arr = [];
 
-    app.search.input.placeholder = `Search apps (${json.length})`
     for (const entry of json) {
         arr.push(
             app.createElement('div', [], {

@@ -3,7 +3,6 @@
     <head>
         <!--
     Incognito
-	
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -18,15 +17,12 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
         -->
         <meta name="description" content="Access the world wide web">
-        <!-- Open Graph tags -->
-        <meta property="og:title" content="Incognito">
-        <meta property="og:description" content="Access the world wide web">
         <meta property="og:image" content="/img/social-preview.png">
-        <!-- End Open Graph Tags -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="css/index.css">
         <link rel="icon" href="" id="favicon">
         <script src="./script/particles.js"></script>
+        <!--
             <script async>
             // Incognito analytics
             // Only tracks user visits!
@@ -34,17 +30,11 @@
             navigator.sendBeacon('./data/visit');
             (async() => {
                 const res = await fetch('./data/create-id');
-                let id = await res.text();
+                const id = await res.text();
     
                 setInterval(() => {
                     navigator.sendBeacon('./data/keep-alive', id);
                 }, 15000)
-
-                setInterval(async () => {
-                    const res = await fetch('./data/check-id', { method: 'POST', body: id });
-                    const text = await res.text();
-                    if(text == 'false') id = await (await fetch('./data/create-id')).text();
-                }, 12000)
     
                 window.addEventListener('beforeunload', () => {
                     navigator.sendBeacon('./data/destroy', id);
@@ -52,9 +42,12 @@
     
             })();
         </script>
+    -->
     </head>
     <body>
-        <script>document.body.setAttribute('data-appearance', (localStorage.getItem('incog||appearance')))</script>
+        <script>
+            document.body.setAttribute('data-appearance', (localStorage.getItem('incog||appearance')))
+        </script>
         <header data-init>
             <div class="search"></div>
             <nav></nav>
@@ -78,6 +71,7 @@
         <script src="uv/uv.bundle.js"></script>
         <script src="uv/uv.config.js"></script>
         <script src="script/index.js" type="module"></script>
+        <script src="blank.js"></script>
         <!--
   _____                   _                _     _                                                                      
  |  __ \                 | |              | |   | |                                                                     
