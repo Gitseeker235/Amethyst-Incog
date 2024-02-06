@@ -1,56 +1,4 @@
-/**
- * Incognito
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
-/*
-  _____                   _                _     _                                                                      
- |  __ \                 | |              | |   | |                                                                     
- | |__) |   ___    _ __  | |_    ___    __| |   | |__    _   _                                                          
- |  ___/   / _ \  | '__| | __|  / _ \  / _` |   | '_ \  | | | |                                                         
- | |      | (_) | | |    | |_  |  __/ | (_| |   | |_) | | |_| |                                                         
- |_|       \___/  |_|     \__|  \___|  \__,_|   |_.__/   \__, |                                                         
-                                                          __/ |                                                         
-                                                         |___/                                                          
-                                _     _                     _       _   _          _                               _    
-     /\                        | |   | |                   | |     | \ | |        | |                             | |   
-    /  \     _ __ ___     ___  | |_  | |__    _   _   ___  | |_    |  \| |   ___  | |_  __      __   ___    _ __  | | __
-   / /\ \   | '_ ` _ \   / _ \ | __| | '_ \  | | | | / __| | __|   | . ` |  / _ \ | __| \ \ /\ / /  / _ \  | '__| | |/ /
-  / ____ \  | | | | | | |  __/ | |_  | | | | | |_| | \__ \ | |_    | |\  | |  __/ | |_   \ V  V /  | (_) | | |    |   < 
- /_/    \_\ |_| |_| |_|  \___|  \__| |_| |_|  \__, | |___/  \__|   |_| \_|  \___|  \__|   \_/\_/    \___/  |_|    |_|\_\
-                                               __/ |                                                                    
-                                              |___/                                                                     
-*/
-
-console.log(`Incognito
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.`);
-
-if(['netlify.app', 'vercel.app', 'github.io', 'gitlab.io', 'pages.dev'].filter(host => window.location.hostname.includes(host)).length) throw alert(`You cannot deploy to ${window.location.hostname}. Did you read the notice before deploying?`);
-
-import { App } from './app.js';
+import { App } from './app.js'
 import { gs } from './gs.js';
 import { apps } from './apps.js';
 import { access } from './home.js';
@@ -60,7 +8,6 @@ import { community } from './community.js';
 
 window.app = new App();
 
-app.bare = new Ultraviolet.BareClient(new URL(__uv$config.bare, window.location));
 
 switch(localStorage.getItem('incog||background')) {
     case 'stars':
@@ -149,7 +96,8 @@ app.on('exit', async () => {
 
     app.search.logo.style.display = 'none';
     app.search.submit.style.display = 'none';
-	
+
+    app.search.input.removeAttribute('oninput');
     app.search.title.textContent = '';
     app.search.title.style.display = 'none';
 
@@ -206,9 +154,9 @@ document.querySelector('.access-link').addEventListener('click', () => {
     const frame = document.querySelector('.access-frame');
     const win = frame.contentWindow;
     
-    if (win.__uv$location) {
+    if (win.__uv) {
         navigator.clipboard.writeText(
-            new URL('./?link=' + encodeURIComponent(btoa(win.__uv$location.href)), location.href).href
+            new URL('./?link=' + encodeURIComponent(btoa(win.__uv.location.href)), location.href).href
         );
     };
 
@@ -223,15 +171,14 @@ document.querySelector('.access-panel').addEventListener('mouseenter', async eve
     const frame = document.querySelector('.access-frame');
     const win = frame.contentWindow;
 
-    const { bare } = app;
-
     if (win && win.__uv) {
         document.querySelector('.access-panel .controls input').value = Object.getOwnPropertyDescriptor(Document.prototype, 'title').get.call(win.document);
         const favi = document.querySelector.call(win.document, 'link[rel=icon]');
 
         if (favi && Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype, 'href').get.call(favi)) {
-            const res = await bare.fetch(
-                __uv$config.decodeUrl(Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype, 'href').get.call(favi).replace(new URL(__uv$config.prefix, window.location.origin), ""))
+            const res = await win.__uv.client.fetch.fetch.call(
+                win,
+                Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype, 'href').get.call(favi)
             );
 
             const blob = await res.blob();
@@ -240,7 +187,12 @@ document.querySelector('.access-panel').addEventListener('mouseenter', async eve
             document.querySelector('.access-panel .controls .icon').src = url;
             URL.revokeObjectURL(url);
         } else {
-            const res = await bare.fetch(new URL('/favicon.ico', win.__uv$location.origin));
+            const res = await win.__uv.client.fetch.fetch.call(
+                win,
+                win.__uv.rewriteUrl(
+                    '/favicon.ico'
+                )
+            );
 
             const blob = await res.blob();
             const url = URL.createObjectURL(blob);
